@@ -1,6 +1,7 @@
 package com.acsendo.controller;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,9 +22,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.acsendo.dto.DenominacionDTO;
 import com.acsendo.exception.ModelNotFoundException;
 import com.acsendo.model.Denominacion;
+import com.acsendo.model.DetalleDenominacion;
 import com.acsendo.service.IDenominacionService;
+import com.acsendo.service.IDetalleDenominacionService;
 
 @RestController
 @RequestMapping("/v1/denominaciones")
@@ -33,6 +37,9 @@ public class DenominacionController {
 
 	@Autowired
 	private IDenominacionService service;
+	
+	@Autowired
+	private IDetalleDenominacionService detalleService;
 
 	@GetMapping
 	public ResponseEntity<List<Denominacion>> listarDenominacion() {
@@ -46,13 +53,40 @@ public class DenominacionController {
 	
 
 	@PostMapping
-	public ResponseEntity<Denominacion> registrar(@Valid @RequestBody Denominacion entity) {
+	public ResponseEntity<Denominacion> registrar(@Valid @RequestBody DenominacionDTO entity) {
 
 		Denominacion obj = null;
 		if (entity != null) {
-			obj = this.service.registrar(entity);
-		}
+			
+			//Validamos que exista esta denominacion
+			Denominacion persist = this.service.validaExisteDenominacion(entity.getDenominacion().getValorDescripcion()); 
+			
+			if( persist == null ) {
+				// si no existe la creamos				
+				obj = this.service.registrar(entity.getDenominacion());
+				
+				//luego registramos el movimiento de su inventario
+				DetalleDenominacion detalle = new DetalleDenominacion();
+				detalle.setDenominacion(obj);
+				detalle.setCantidad(entity.getCantidad());
+				detalle.setFechaTx(entity.getFechaTx());
+				
+				this.detalleService.registrar(detalle);
+				
+			}else{//si no insertamos solamente un registro en el inventario de efectivo
 
+				obj = persist;				
+				//luego registramos el movimiento de su inventario
+				DetalleDenominacion detalle = new DetalleDenominacion();
+				detalle.setDenominacion(obj);
+				detalle.setCantidad(entity.getCantidad());
+				detalle.setFechaTx(entity.getFechaTx());
+				
+				this.detalleService.registrar(detalle);		
+								
+			}
+			
+		}
 		logger.info("Registrando Denominacion");
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(obj.getIdDenominacion()).toUri();

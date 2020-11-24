@@ -18,8 +18,7 @@ public class DenominacionServiceImpl implements IDenominacionService {
 	private IDenominacionDAO repo;
 
 	@Override
-	public Denominacion registrar(Denominacion entity) {
-		
+	public Denominacion registrar(Denominacion entity) {		
 		return this.repo.save(entity);
 	}
 
@@ -47,5 +46,13 @@ public class DenominacionServiceImpl implements IDenominacionService {
 		
 		
 	}
+
+	@Override
+	public Denominacion validaExisteDenominacion(int idParam) {		
+		return this.repo.validaExisteDenominacion(idParam);
+	}
+	
+		
+	
 
 }
