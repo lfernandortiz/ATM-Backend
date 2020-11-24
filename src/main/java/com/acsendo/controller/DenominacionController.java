@@ -3,6 +3,7 @@ package com.acsendo.controller;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -20,11 +21,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.acsendo.exception.ModelNotFoundException;
 import com.acsendo.model.Denominacion;
 import com.acsendo.service.IDenominacionService;
 
 @RestController
-@RequestMapping("v1/denominaciones")
+@RequestMapping("/v1/denominaciones")
 public class DenominacionController {
 
 	Logger logger = LoggerFactory.getLogger(DenominacionController.class);
@@ -54,7 +56,7 @@ public class DenominacionController {
 		logger.info("Registrando Denominacion");
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(obj.getIdDenominacion()).toUri();
-		// System.out.println(location);
+		
 		return new ResponseEntity<Denominacion>(obj, HttpStatus.OK);
 	}
 
@@ -79,7 +81,7 @@ public class DenominacionController {
 
 		if (!obj.isPresent()) {
 			logger.info("Denominacion no encontrada con nit: " + obj.get().getIdDenominacion());
-			//throw new ModelNotFoundException("ID (" + id + ") no encontrado para Eliminar");
+			throw new ModelNotFoundException("ID (" + id + ") no encontrado para Eliminar");
 		} else {
 			logger.info("Eliminando Denominacion con id: " +obj.get().getIdDenominacion());
 			this.service.eliminar(id);
