@@ -26,6 +26,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.acsendo.dto.DenominacionDTO;
 import com.acsendo.dto.ListDenominacionDTO;
+import com.acsendo.exception.GenericException;
 import com.acsendo.exception.ModelNotFoundException;
 import com.acsendo.model.Denominacion;
 import com.acsendo.model.DetalleDenominacion;
@@ -46,6 +47,8 @@ public class DenominacionController {
 	private IDetalleDenominacionService detalleService;
 	
 	
+	private final String NO_MULTIPLO_MIL = "La denominacion debe ser un multiplo de Mil";
+	
 
 
 	@GetMapping
@@ -61,6 +64,11 @@ public class DenominacionController {
 
 	@PostMapping
 	public ResponseEntity<Denominacion> registrar(@Valid @RequestBody DenominacionDTO entity) {
+		
+		//se valida que la denominacion se multiplo de mil
+		if(! this.service.esMultiploDeMil(entity.getDenominacion().getValorDescripcion())) {
+			throw new GenericException(this.NO_MULTIPLO_MIL);
+		}
 
 		Denominacion obj = null;
 		if (entity != null) {
@@ -69,7 +77,7 @@ public class DenominacionController {
 			Denominacion persist = this.service.obtenerPorDenominacion(entity.getDenominacion().getValorDescripcion()); 
 			
 			if( persist == null ) {
-				// si no existe la creamos				
+				// si no existe la creamos		
 				obj = this.service.registrar(entity.getDenominacion());
 				
 				//luego registramos el movimiento de su inventario

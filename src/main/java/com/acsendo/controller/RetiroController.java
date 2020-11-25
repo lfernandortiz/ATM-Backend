@@ -27,8 +27,7 @@ import com.acsendo.service.IRetiroService;
 
 @RestController
 @RequestMapping("/v1/retiros")
-public class RetiroController  {
-	
+public class RetiroController  {	
 	
 	
 		
@@ -48,7 +47,4 @@ public class RetiroController  {
 		}
 		
 		
-		
-		
-
 }

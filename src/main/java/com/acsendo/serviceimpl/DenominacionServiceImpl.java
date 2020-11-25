@@ -52,6 +52,11 @@ public class DenominacionServiceImpl implements IDenominacionService {
 		return this.repo.obtenerPorDenominacion(idParam);
 	}
 	
+	
+	public boolean esMultiploDeMil(Integer valor) {
+		return valor % 1000 == 0 ;
+	}
+	
 		
 	
 

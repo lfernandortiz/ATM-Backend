@@ -23,14 +23,25 @@ public class RetiroServiceImpl implements IRetiroService {
 	
 	@Autowired
 	private IDenominacionService denominacionService;
+	
+	
+	private final String SALDO_INSUFICIENTE = "El cajero no cuenta con el saldo suficiente para el valor solicitado";
+	private final String SIN_DENOMINACIONES = "El cajero no cuenta con las denominaciones de billetes necesarias para entregar su retiro";
+	private final String NO_ENTERO = "Los Valores deben ser enteros";
+	
+	
 
 	public List<ListDenominacionDTO> realizarRetiro(int valorRetiro) {
+		
+		if(!this.esEntero(valorRetiro)) {
+			throw new GenericException(this.NO_ENTERO);
+		}
 
 		Integer saldo = this.saldoCajero();
 
 		// valida si hay saldo en el cajero para el retiro
 		if (this.saldoCajero() < valorRetiro) {
-			throw new GenericException("El cajero no cuenta con el saldo suficiente para el valor solicitado");
+			throw new GenericException(this.SALDO_INSUFICIENTE);
 		}
 
 		// valida que las denominaciones existentes puedan cubrir le valor del retiro
@@ -91,7 +102,7 @@ public class RetiroServiceImpl implements IRetiroService {
 			});	
 		} else {
 			efectivo = null;
-			throw new GenericException("El cajero no cuenta con las denominaciones de billetes necesarias para dispensar su retiro");
+			throw new GenericException(this.SIN_DENOMINACIONES);
 		}	
 		return efectivo;
 	}
@@ -106,9 +117,13 @@ public class RetiroServiceImpl implements IRetiroService {
 		for (Object[] e : result) {
 			total += ((BigInteger) e[1]).intValue();
 		}
-
 		return total;
 
+	}
+	
+	
+	private Boolean esEntero( Integer valor ) {
+		return valor % 1 == 0;
 	}
 
 }
