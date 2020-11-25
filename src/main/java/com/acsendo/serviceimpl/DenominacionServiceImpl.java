@@ -48,8 +48,8 @@ public class DenominacionServiceImpl implements IDenominacionService {
 	}
 
 	@Override
-	public Denominacion validaExisteDenominacion(int idParam) {		
-		return this.repo.validaExisteDenominacion(idParam);
+	public Denominacion obtenerPorDenominacion(int idParam) {		
+		return this.repo.obtenerPorDenominacion(idParam);
 	}
 	
 		

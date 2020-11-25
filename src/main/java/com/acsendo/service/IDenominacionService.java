@@ -8,6 +8,6 @@ import com.acsendo.model.Denominacion;
 
 public interface IDenominacionService  extends ICRUD<Denominacion> {
 	
-	Denominacion validaExisteDenominacion( int idParam);
+	Denominacion obtenerPorDenominacion( int idParam);
 
 }

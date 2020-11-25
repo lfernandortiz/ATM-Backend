@@ -1,6 +1,7 @@
 package com.acsendo.serviceimpl;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.acsendo.dto.ListDenominacionDTO;
 import com.acsendo.exception.GenericException;
+import com.acsendo.model.DetalleDenominacion;
+import com.acsendo.service.IDenominacionService;
 import com.acsendo.service.IDetalleDenominacionService;
 import com.acsendo.service.IRetiroService;
 
@@ -17,6 +20,9 @@ public class RetiroServiceImpl implements IRetiroService {
 
 	@Autowired
 	private IDetalleDenominacionService detalleService;
+	
+	@Autowired
+	private IDenominacionService denominacionService;
 
 	public List<ListDenominacionDTO> realizarRetiro(int valorRetiro) {
 
@@ -61,29 +67,36 @@ public class RetiroServiceImpl implements IRetiroService {
 			// obtiene el saldo final para la actual denominacion
 			saldoFinal = saldoFinal - (cantidadBilletes * ((Integer) denominacionActual[0]).intValue());
 
+			// si hay cantidad para la denominacion actual anade la denominacion y la cantidad al efectivo a entregar
 			if (cantidadBilletes > 0) {
 				ListDenominacionDTO denominacion = new ListDenominacionDTO();
 				denominacion.setDenominacion(((Integer) denominacionActual[0]).intValue());
 				denominacion.setTotal(cantidadBilletes);
-
 				efectivo.add(denominacion);
 			}
-
 		}
-
-		if (saldoFinal == 0) {
-			//persiste el movimiento en el detalle de Denominacion
-
+		
+		//si el saldo final es Cero, el cajero contaba con las denominaciones necesarias para dispensar 
+		//el valor solicitado
+		if (saldoFinal == 0) {			
+			//persiste el movimiento en el detalle de Denominacion para acutalizar el inventerio			
+			efectivo.forEach( e -> {
+				DetalleDenominacion detalle = new DetalleDenominacion();
+				detalle.setDenominacion(this.denominacionService.obtenerPorDenominacion(e.getDenominacion()));
+				detalle.setCantidad(- e.getTotal());
+				detalle.setFechaTx(LocalDateTime.now());
+				
+				this.detalleService.registrar(detalle);
+				
+			});	
 		} else {
+			efectivo = null;
 			throw new GenericException("El cajero no cuenta con las denominaciones de billetes necesarias para dispensar su retiro");
-		}
-
-		// genera el list de billetes a entregar
-
+		}	
 		return efectivo;
-
 	}
 
+	
 	public Integer saldoCajero() {
 
 		Integer total = 0;

@@ -12,6 +12,6 @@ import com.acsendo.model.Denominacion;
 public interface IDenominacionDAO extends JpaRepository <Denominacion, Integer>{
 	
 	@Query( "from Denominacion d where d.valorDescripcion = :idParam ")
-	Denominacion validaExisteDenominacion(@Param("idParam") int idParam);
+	Denominacion obtenerPorDenominacion(@Param("idParam") int idParam);
 
 }

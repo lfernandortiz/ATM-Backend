@@ -66,7 +66,7 @@ public class DenominacionController {
 		if (entity != null) {
 			
 			//Validamos que exista esta denominacion
-			Denominacion persist = this.service.validaExisteDenominacion(entity.getDenominacion().getValorDescripcion()); 
+			Denominacion persist = this.service.obtenerPorDenominacion(entity.getDenominacion().getValorDescripcion()); 
 			
 			if( persist == null ) {
 				// si no existe la creamos				
