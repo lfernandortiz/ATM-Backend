@@ -49,4 +49,18 @@ public class DetalleDenominacionServiceImpl implements IDetalleDenominacionServi
 
 	}
 
+	@Override
+	public List<Object[]> lisatarDetalleDenominaciones() {
+		
+		return this.repo.lisatarDetalleDenominaciones();
+	}
+
+	@Override
+	public List<Object[]> saldosPorDenominacion() {		
+		return this.repo.saldosPorDenominacion();
+	}
+	
+	
+	
+
 }

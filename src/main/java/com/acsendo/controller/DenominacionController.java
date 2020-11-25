@@ -1,7 +1,8 @@
 package com.acsendo.controller;
 
+import java.math.BigInteger;
 import java.net.URI;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,11 +24,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.acsendo.dto.DenominacionDTO;
+import com.acsendo.dto.ListDenominacionDTO;
 import com.acsendo.exception.ModelNotFoundException;
 import com.acsendo.model.Denominacion;
 import com.acsendo.model.DetalleDenominacion;
 import com.acsendo.service.IDenominacionService;
 import com.acsendo.service.IDetalleDenominacionService;
+
 
 @RestController
 @RequestMapping("/v1/denominaciones")
@@ -40,6 +43,9 @@ public class DenominacionController {
 	
 	@Autowired
 	private IDetalleDenominacionService detalleService;
+	
+	
+
 
 	@GetMapping
 	public ResponseEntity<List<Denominacion>> listarDenominacion() {
@@ -122,6 +128,18 @@ public class DenominacionController {
 		}
 
 		return new ResponseEntity<Object>(obj.get(), HttpStatus.OK);
+	}
+	
+	
+	@GetMapping("/listardetalledenominaciones")
+	public List<ListDenominacionDTO> lisatarDetalleDenominaciones() {
+		List<ListDenominacionDTO> resp = new ArrayList<>();
+		
+		this.detalleService.lisatarDetalleDenominaciones().forEach( e -> {
+			resp.add( new ListDenominacionDTO( ((Integer) e[0]).intValue(), ((Integer) e[1]).intValue() ));
+		});
+		
+		return resp;
 	}
 
 }

@@ -41,6 +41,33 @@ public class Denominacion {
 	public void setValorDescripcion(Integer valorDescripcion) {
 		this.valorDescripcion = valorDescripcion;
 	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((valorDescripcion == null) ? 0 : valorDescripcion.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Denominacion other = (Denominacion) obj;
+		if (valorDescripcion == null) {
+			if (other.valorDescripcion != null)
+				return false;
+		} else if (!valorDescripcion.equals(other.valorDescripcion))
+			return false;
+		return true;
+	}
 	
 	
 	
