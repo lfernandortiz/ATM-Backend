@@ -14,90 +14,88 @@ import com.acsendo.service.IRetiroService;
 
 @Service
 public class RetiroServiceImpl implements IRetiroService {
-	
-	
+
 	@Autowired
 	private IDetalleDenominacionService detalleService;
-	
-	public Integer realizarRetiro( int valorRetiro ){		
-		
-		Integer saldo = this.saldoCajero();	
-		
-		//valida si hay saldo en el cajero para el retiro
-		if( this.saldoCajero() < valorRetiro ) {			
+
+	public List<ListDenominacionDTO> realizarRetiro(int valorRetiro) {
+
+		Integer saldo = this.saldoCajero();
+
+		// valida si hay saldo en el cajero para el retiro
+		if (this.saldoCajero() < valorRetiro) {
 			throw new GenericException("El cajero no cuenta con el saldo suficiente para el valor solicitado");
-		}		
-		
-		//valida que las denominaciones existentes puedan cubrir le valor del retiro
+		}
+
+		// valida que las denominaciones existentes puedan cubrir le valor del retiro
 		//
 		List<Object[]> inventario = this.detalleService.inventarioSaldos();
-		
-		Integer saldoFinal = valorRetiro ;
-		
+
+		Integer saldoFinal = valorRetiro;
+
 		List<ListDenominacionDTO> efectivo = new ArrayList<>();
-		
-		for(Object[] denominacionActual : inventario) {
-			
-			//denominacionActual[0] La denominacion
-			//denominacionActual[1] El inventario
-			//denominacionActual[2] Saldo para la denominacion actual 			
-			
-			Integer nuevoSaldo= 0;
+
+		for (Object[] denominacionActual : inventario) {
+
+			// denominacionActual[0] La denominacion
+			// denominacionActual[1] El inventario
+			// denominacionActual[2] Saldo para la denominacion actual
+
+			Integer nuevoSaldo = 0;
 			Integer cantidadBilletes = 0;
-			//El nuevo saldo se obtiene de restar al saldoFinal el saldo de la Denominacion denominacionActual[2]
-			nuevoSaldo = saldoFinal - ((BigInteger)denominacionActual[2]).intValue();
-			
-			//si el nuevo saldo es negativo o cero obtengo las cantidad de billetes para cubrir el retircon con la denominacion actual
-			if( nuevoSaldo <= 0 ) {
-				cantidadBilletes = (int) Math.ceil( saldoFinal / ((BigInteger)denominacionActual[0]).intValue());
+			// El nuevo saldo se obtiene de restar al saldoFinal el saldo de la Denominacion
+			// denominacionActual[2]
+			nuevoSaldo = saldoFinal - ((BigInteger) denominacionActual[2]).intValue();
+
+			// si el nuevo saldo es negativo o cero obtengo las cantidad de billetes paracx
+			// cubrir el retircon con la denominacion actual
+			if (nuevoSaldo <= 0) {
+				Float temp = (float) (saldoFinal / ((Integer) denominacionActual[0]).intValue());
+				cantidadBilletes = (int) Math.ceil(temp);
 			}
-			//si el nuevo saldo es positivo agregro los billestes disponibles para la denominacion actual
-			if( nuevoSaldo > 0 ) {
-				cantidadBilletes = ((BigInteger)denominacionActual[1]).intValue();
+			// si el nuevo saldo es positivo agregro los billestes disponibles para la
+			// denominacion actual
+			if (nuevoSaldo > 0) {
+				cantidadBilletes = ((BigInteger) denominacionActual[1]).intValue();
 			}
-			//obtiene el saldo final para la actual denominacion 
-			saldoFinal = nuevoSaldo - ( cantidadBilletes * ((BigInteger)denominacionActual[0]).intValue());
-			
-			ListDenominacionDTO denominacion = new ListDenominacionDTO();
-			denominacion.setDenominacion(((BigInteger)denominacionActual[0]).intValue());
-			denominacion.setTotal(cantidadBilletes);			
-			
+			// obtiene el saldo final para la actual denominacion
+			saldoFinal = saldoFinal - (cantidadBilletes * ((Integer) denominacionActual[0]).intValue());
+
+			if (cantidadBilletes > 0) {
+				ListDenominacionDTO denominacion = new ListDenominacionDTO();
+				denominacion.setDenominacion(((Integer) denominacionActual[0]).intValue());
+				denominacion.setTotal(cantidadBilletes);
+
+				efectivo.add(denominacion);
+			}
+
 		}
-		
-		if( saldoFinal == 0 ) {
-			
-		}else {
-			throw new GenericException("El cajero no cuenta con las denominaciones para dispensar su retiro");
+
+		if (saldoFinal == 0) {
+			//persiste el movimiento en el detalle de Denominacion
+
+		} else {
+			throw new GenericException("El cajero no cuenta con las denominaciones de billetes necesarias para dispensar su retiro");
 		}
-		
-		
-		
-		
-		
-		//genera el list de billetes a entregar
-		
-		
-		
-		return saldo;
-		
+
+		// genera el list de billetes a entregar
+
+		return efectivo;
+
 	}
-	
-	
-	
-	
-	
+
 	public Integer saldoCajero() {
-		
-		Integer  total = 0;
-		
+
+		Integer total = 0;
+
 		List<Object[]> result = this.detalleService.saldosPorDenominacion();
-				
-		for(Object [] e : result ) {
+
+		for (Object[] e : result) {
 			total += ((BigInteger) e[1]).intValue();
 		}
-		
+
 		return total;
-		
+
 	}
 
 }

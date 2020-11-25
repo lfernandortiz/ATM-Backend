@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-
+import com.acsendo.dto.ListDenominacionDTO;
 import com.acsendo.service.IRetiroService;
 
 @RestController
@@ -38,13 +38,13 @@ public class RetiroController  {
 		private IRetiroService service;
 		
 		@PostMapping		
-		public ResponseEntity<Integer> retiroDinero( @RequestBody Integer valor) {
+		public ResponseEntity<List<ListDenominacionDTO>> retiroDinero( @RequestBody Integer valor) {
 			
-			Integer saldo  = this.service.realizarRetiro(valor);
+			List<ListDenominacionDTO> efectivo  = this.service.realizarRetiro(valor);
 			
 			logger.info("Realizadon retiro en el cajero");
 			
-			return new ResponseEntity<Integer>(saldo, HttpStatus.OK);
+			return new ResponseEntity<List<ListDenominacionDTO>>(efectivo, HttpStatus.OK);
 		}
 		
 		

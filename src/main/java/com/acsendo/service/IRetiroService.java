@@ -6,7 +6,7 @@ import com.acsendo.dto.ListDenominacionDTO;
 
 public interface IRetiroService {
 	
-	Integer realizarRetiro( int valorRetiro );
+	List<ListDenominacionDTO> realizarRetiro( int valorRetiro );
 	
 	Integer saldoCajero();
 
