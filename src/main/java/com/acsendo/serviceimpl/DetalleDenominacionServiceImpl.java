@@ -59,6 +59,11 @@ public class DetalleDenominacionServiceImpl implements IDetalleDenominacionServi
 	public List<Object[]> saldosPorDenominacion() {		
 		return this.repo.saldosPorDenominacion();
 	}
+
+	@Override
+	public List<Object[]> inventarioSaldos() {		
+		return this.repo.inventarioSaldos();
+	}
 	
 	
 	

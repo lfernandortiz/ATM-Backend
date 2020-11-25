@@ -4,30 +4,31 @@ package com.acsendo.dto;
 
 public class ListDenominacionDTO {
 	
-	private int denominacion;
+	private Integer denominacion;
 	
-	private int total;
+	private Integer total;
 	
-	
-	public ListDenominacionDTO(int denominacion, int total) {
+	public ListDenominacionDTO(){};
+		
+	public ListDenominacionDTO(Integer denominacion, Integer total) {
 		super();
 		this.denominacion = denominacion;
 		this.total = total;
 	}
 
-	public int getDenominacion() {
+	public Integer getDenominacion() {
 		return denominacion;
 	}
 
-	public void setDenominacion(int denominacion) {
+	public void setDenominacion(Integer denominacion) {
 		this.denominacion = denominacion;
 	}
 
-	public int getTotal() {
+	public Integer getTotal() {
 		return total;
 	}
 
-	public void setTotal(int total) {
+	public void setTotal(Integer total) {
 		this.total = total;
 	}
 	

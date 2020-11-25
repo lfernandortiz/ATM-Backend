@@ -1,5 +1,6 @@
 package com.acsendo.controller;
 
+
 import java.math.BigInteger;
 import java.net.URI;
 import java.util.ArrayList;
@@ -136,7 +137,7 @@ public class DenominacionController {
 		List<ListDenominacionDTO> resp = new ArrayList<>();
 		
 		this.detalleService.lisatarDetalleDenominaciones().forEach( e -> {
-			resp.add( new ListDenominacionDTO( ((Integer) e[0]).intValue(), ((Integer) e[1]).intValue() ));
+			resp.add( new ListDenominacionDTO( ((Integer) e[0]).intValue(), ((BigInteger) e[1]).intValue() ));
 		});
 		
 		return resp;
